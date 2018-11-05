@@ -1,0 +1,28 @@
+version: '3'
+services:
+  db:
+    image: postgres:10-alpine
+    ports:
+      - "5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+  backend:
+    build:
+      context: backend
+    command: 'bundle exec rails server -p 8080 -b 0.0.0.0'
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+  frontend:
+    build:
+      context: frontend
+    command: yarn run dev
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "3000:3000"
+volumes:
+  db_data:
